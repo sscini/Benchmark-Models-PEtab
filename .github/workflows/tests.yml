@@ -8,14 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11]
+        python-version: [3.12]
 
     steps:
     - name: Check out repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Prepare python ${{ matrix.python-version }}
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -28,8 +28,17 @@ jobs:
     - name: Check with petablint
       run: bmp-petablint
 
+    - name: Check TSV format
+      run: bmp-check-tsv-format
+
     - name: Show overview
       run: bmp-create-overview
 
     - name: Check SBML metadata
       run: bmp-check-sbml-metadata
+
+    - name: Check all PEtab YAML files under problems/
+      # informational only for now -- some pre-existing, unrelated problems
+      # are known to fail this check
+      continue-on-error: true
+      run: bmp-check-petab-yaml
